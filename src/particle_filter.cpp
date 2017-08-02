@@ -68,7 +68,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
   //  http://www.cplusplus.com/reference/random/default_random_engine/
 
   // random noise distributions
-  // TODO!
+  normal_distribution<double> dist_x(0, std_pos[0]);
+  normal_distribution<double> dist_y(0, std_pos[1]);
+  normal_distribution<double> dist_theta(0, std_pos[2]);
 
   // update the state of all particles
   for (std::vector<Particle>::iterator iter = particles.begin();
@@ -91,9 +93,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
     double new_theta = theta_yaw_deltat;
 
     // update the particles state
-    (*iter).x = new_x;
-    (*iter).y = new_y;
-    (*iter).theta = new_theta;
+    (*iter).x = new_x + dist_x(gen);
+    (*iter).y = new_y + dist_y(gen);
+    (*iter).theta = new_theta + dist_theta(gen);
 
   }
 
@@ -226,7 +228,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
           ++filteredLandmarksCtr) {
         if (filteredLandmarks[filteredLandmarksCtr].id
             == transformedObservations[ctr].id) {
-          // TODO: I'm sure indexes are not correct.
           newWeight *= multivariateGaussDensity(transformedObservations[ctr],
               filteredLandmarks[filteredLandmarksCtr], std_landmark);
           break;
