@@ -23,10 +23,12 @@ struct Particle {
 	std::vector<double> sense_y;
 };
 
-
+void filterOnSensorRange(const Particle& particle, const Map& map_landmarks, double sensor_range, std::vector<LandmarkObs>& filteredLandmarks);
+void convertToMapCoordinates(const std::vector<LandmarkObs>& observations, const Particle& particle, std::vector<LandmarkObs>& converted);
 
 class ParticleFilter {
 	
+public:
 	// Number of particles to draw
 	int num_particles; 
 	
@@ -38,7 +40,7 @@ class ParticleFilter {
 	// Vector of weights of all particles
 	std::vector<double> weights;
 	
-public:
+//public:
 	
 	// Set of current particles
 	std::vector<Particle> particles;
@@ -59,7 +61,7 @@ public:
 	 * @param std[] Array of dimension 3 [standard deviation of x [m], standard deviation of y [m]
 	 *   standard deviation of yaw [rad]]
 	 */
-	void init(double x, double y, double theta, double std[]);
+	void init(int numParticles, double x, double y, double theta, double std[]);
 
 	/**
 	 * prediction Predicts the state for the next time step
