@@ -23,15 +23,14 @@ using namespace std;
 // for generating random numbers
 default_random_engine gen;
 
-void ParticleFilter::init(int numParticles, double x, double y, double theta,
-    double std[]) {
+void ParticleFilter::init(double x, double y, double theta, double std[]) {
   // TODO: Set the number of particles. Initialize all particles to first position (based on estimates of
   //   x, y, theta and their uncertainties from GPS) and all weights to 1.
   // Add random Gaussian noise to each particle.
   // NOTE: Consult particle_filter.h for more information about this method (and others in this file).
 
   // set the number of particles to use
-  num_particles = numParticles;
+  num_particles = 1000;
 
   // create a gaussian distributions for each of the parameters
   normal_distribution<double> dist_x(x, std[0]);
@@ -81,16 +80,27 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
     double current_y = (*iter).y;
     double current_theta = (*iter).theta;
 
-    // some intermediate calculations
-    double theta_yaw_deltat = current_theta + (yaw_rate * delta_t);
-    double velocity_over_yaw = velocity / yaw_rate;
+    double new_x, new_y, new_theta;
 
-    // calculate the new values
-    double new_x = current_x
-        + velocity_over_yaw * (sin(theta_yaw_deltat) - sin(current_theta));
-    double new_y = current_y
-        + velocity_over_yaw * (cos(current_theta) - cos(theta_yaw_deltat));
-    double new_theta = theta_yaw_deltat;
+    // make sure yam_rate is never approx 0
+    if (fabs(yaw_rate) < 0.0001) {
+      // 'yaw_rate=0.'
+      new_x = current_x + velocity * delta_t * cos(current_theta);
+      new_y = current_y + velocity * delta_t * sin(current_theta);
+      new_theta = current_theta;
+
+    } else {
+      // some intermediate calculations
+      double theta_yaw_deltat = current_theta + (yaw_rate * delta_t);
+      double velocity_over_yaw = velocity / yaw_rate;
+
+      // calculate the new values
+      new_x = current_x
+          + velocity_over_yaw * (sin(theta_yaw_deltat) - sin(current_theta));
+      new_y = current_y
+          + velocity_over_yaw * (cos(current_theta) - cos(theta_yaw_deltat));
+      new_theta = theta_yaw_deltat;
+    }
 
     // update the particles state
     (*iter).x = new_x + dist_x(gen);

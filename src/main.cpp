@@ -26,7 +26,7 @@ std::string hasData(std::string s) {
   return "";
 }
 
-bool performTests() {
+/*bool performTests() {
   // informs test-listener about testresults
   CPPUNIT_NS::TestResult testresult;
   // register listener for collecting the test-results
@@ -49,7 +49,7 @@ bool performTests() {
   // return 0 if tests were successful
   return collectedresults.wasSuccessful() ? 0 : 1;
 
-}
+}*/
 
 int main() {
   //performTests();
